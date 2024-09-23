@@ -21,4 +21,4 @@ run: tre
 	./tre
 
 clean:
-	rm -rf $(ODIR)
+	rm -rf $(ODIR)/*

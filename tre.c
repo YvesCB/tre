@@ -9,6 +9,8 @@
 
 int nanosleep(const struct timespec *req, struct timespec *rem);
 
+char *buffer;
+
 typedef struct V2 {
   int x;
   int y;
@@ -58,6 +60,17 @@ void set_nonblocking_mode() {
   fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 }
 
+void handle_resize() {
+  V2 dim = get_terminal_dimensions();
+  free(buffer);
+  buffer = malloc((dim.x * dim.y) * sizeof(char));
+}
+
+void render() {
+  handle_resize();
+  // TODO: Implement the loop through the buffer
+}
+
 int main() {
   // Set up signal handler for Ctrl+C
   signal(SIGINT, handle_sigint);
@@ -65,6 +78,8 @@ int main() {
   set_raw_mode();
 
   set_nonblocking_mode();
+
+  buffer = NULL;
 
   // Loop to read and print key presses
   char c;
