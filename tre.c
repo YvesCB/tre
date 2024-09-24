@@ -16,6 +16,8 @@ typedef struct V2 {
   int y;
 } V2;
 
+V2 current_dimension;
+
 V2 get_terminal_dimensions() {
   struct winsize w;
   ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
@@ -60,15 +62,22 @@ void set_nonblocking_mode() {
   fcntl(STDIN_FILENO, F_SETFL, flags | O_NONBLOCK);
 }
 
-void handle_resize() {
-  V2 dim = get_terminal_dimensions();
-  free(buffer);
-  buffer = malloc((dim.x * dim.y) * sizeof(char));
+void set_pixel(int row, int col, char c) {
+  printf("\033[%d;%dH%c", row, col, c);
+  fflush(stdout);
 }
 
 void render() {
-  handle_resize();
-  // TODO: Implement the loop through the buffer
+  current_dimension = get_terminal_dimensions();
+  for (int x = 0; x < current_dimension.x; x++) {
+    for (int y = 0; y < current_dimension.y; y++) {
+      if (x >= current_dimension.x / 4 && x < current_dimension.x / 4 * 3) {
+        if (y >= current_dimension.y / 4 && y < current_dimension.y / 4 * 3) {
+          set_pixel(y, x, '@');
+        }
+      }
+    }
+  }
 }
 
 int main() {
@@ -85,6 +94,7 @@ int main() {
   char c;
   while (1) {
     clock_t t = clock();
+    render();
     c = getchar();
     system("clear");
 
