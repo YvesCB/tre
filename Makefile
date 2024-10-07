@@ -4,9 +4,7 @@ CFLAGS=-Wall -I.
 
 ODIR=obj
 
-#DEPS=example.h
-
-_OBJ=tre.o
+_OBJ=tre.o termutil.o
 OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: %.c
