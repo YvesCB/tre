@@ -1,13 +1,15 @@
 CC=gcc
 CV=-std=c11
-CFLAGS=-Wall -I.
+CFLAGS=-Wall -MMD -I. -g
 
 ODIR=obj
+SRCDIR=src
 
-_OBJ=tre.o termutil.o
-OBJ=$(patsubst %,$(ODIR)/%,$(_OBJ))
+SRC_FILES=$(wildcard $(SRCDIR)/*.c)
+OBJ=$(patsubst $(SRCDIR)/%.c,$(ODIR)/%.o,$(SRC_FILES))
 
-$(ODIR)/%.o: %.c
+$(ODIR)/%.o: $(SRCDIR)/%.c
+	@mkdir -p $(ODIR)
 	$(CC) $(CFLAGS) $(CV) -c $< -o $@ 
 
 tre: $(OBJ)
@@ -15,8 +17,6 @@ tre: $(OBJ)
 
 .PHONY: clean
 
-run: tre
-	./tre
-
 clean:
 	rm -rf $(ODIR)/*
+	rm -f ./tre
